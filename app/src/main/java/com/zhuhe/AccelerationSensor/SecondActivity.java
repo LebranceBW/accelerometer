@@ -1,18 +1,12 @@
 package com.zhuhe.AccelerationSensor;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import lecho.lib.hellocharts.gesture.ContainerScrollType;
 import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.model.Axis;
@@ -28,8 +22,6 @@ public class SecondActivity extends AppCompatActivity {
     private LineChartView lineChart;
     private List<PointValue> mPointValues = new ArrayList<PointValue>();
     private List<AxisValue> mAxisXValues = new ArrayList<AxisValue>();
-    private Context mContext;
-    public TextView historyInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +40,7 @@ public class SecondActivity extends AppCompatActivity {
         }
 
         initLineChart();//初始化
-        Toast.makeText(getApplicationContext(), "进来了", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "进来了", Toast.LENGTH_SHORT).show();
     }
 
     private void initLineChart() {

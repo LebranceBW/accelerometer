@@ -25,4 +25,5 @@ dependencies {
     compile files('src/libs/hellocharts-library-1.5.8.jar')
     compile files('G:/AndroidWorkspace/sensor/build/generated/hellocharts-library-1.5.8.jar')
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    compile 'com.android.support:design:25.3.1'
 }

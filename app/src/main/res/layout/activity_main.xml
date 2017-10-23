@@ -8,74 +8,66 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="#e0ffff">
-tools:context=".MainActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#00000000"
         android:orientation="vertical"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:android:layout_weight="1">
+            android:orientation="horizontal">
 
             <ToggleButton
-                android:text="x"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
                 android:id="@+id/toggleButton_x"
-                android:layout_weight = "1"
-                tools:text="this"
-                android:textOff="x"
-                android:textOn="x" />
-
-            <ToggleButton
-                android:text="y"
+                style="@android:style/Widget.Button.Toggle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
+                android:layout_weight="1"
+                android:checked="true"
+                android:textOff="@string/xString"
+                android:textOn="@string/xString"
+                tools:text="this" />
+
+            <ToggleButton
                 android:id="@+id/toggleButton_y"
-                tools:text="this"
-                android:layout_weight = "1"
-                android:textOff="y"
-                android:textOn="y" />
-
-            <ToggleButton
-                android:text="z"
+                style="@android:style/Widget.Button.Toggle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textOff="@string/yString"
+                android:textOn="@string/yString"
+                tools:text="this" />
+
+            <ToggleButton
                 android:id="@+id/toggleButton_z"
-                tools:text="this"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_weight = "1"
-                android:textOff="z"
-                android:textOn="z" />
+                style="@android:style/Widget.Button.Toggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textOff="@string/zString"
+                android:textOn="@string/zString"
+                tools:text="this" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fadingEdge="none|horizontal|vertical"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/edit_name"
-                android:layout_alignLeft="@+id/start"
-                android:layout_alignStart="@+id/start"
                 android:layout_marginBottom="13dp"
                 android:src="@drawable/x_2_173173" />
 
@@ -83,9 +75,6 @@ tools:context=".MainActivity">
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/reset"
-                android:layout_alignStart="@+id/reset"
-                android:layout_alignTop="@+id/imageView"
                 android:layout_marginTop="60dp"
                 android:gravity="center_horizontal"
                 android:text=""
@@ -94,27 +83,28 @@ tools:context=".MainActivity">
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/debugText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="27dp"
+            android:layout_marginStart="27dp"
+            android:layout_weight="1"
+            android:text=""
+            android:theme="@style/Base.V22.Theme.AppCompat.Light" />
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center">
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/recordButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@mipmap/play" />
+                app:srcCompat="@mipmap/play"
+                android:background="#00000000" />
 
         </RelativeLayout>
     </LinearLayout>
 
-
-
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:text="历史纪录" />
 
 </RelativeLayout>
