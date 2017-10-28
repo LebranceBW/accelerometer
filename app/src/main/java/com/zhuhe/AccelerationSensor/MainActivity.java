@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity{
     private TestSensorListener mSensorListener;
     private ToggleButton toggleButton_x,toggleButton_y,toggleButton_z;
     private boolean isonRecoding = false;
-    private final int MAXDATACOUNT = 1000;
+    private final int MAXDATACOUNT = 1000000;
     private Queue<dataVector> dataCache = new ArrayDeque<>(MAXDATACOUNT);
     private final String FILENAME = "/log.txt";
     /**
@@ -98,18 +98,10 @@ public class MainActivity extends AppCompatActivity{
                 {
                     recodeButton.setImageResource(R.mipmap.recoding);
                     isonRecoding = true;
-//                    try {
-//                        FileOutputStream refresh = mContext.openFileOutput("m.txt", Context.MODE_PRIVATE);
-//                        refresh.write("".getBytes());  //将String字符串以字节流的形式写入到输出流中
-//                        refresh.close();         //关闭输出流
-//                    }
-//                    catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-
                 }
                 else {
                     recodeButton.setImageResource(R.mipmap.play);
+                    String x = new String();
                     try{
                         File f = new File(getExternalStorageDirectory().toString() + FILENAME);
 //                        File f = new File("/storage/0778-1D"+FILENAME);
@@ -117,9 +109,13 @@ public class MainActivity extends AppCompatActivity{
                             f.createNewFile();
                         FileOutputStream output = new FileOutputStream(f,false);
 
-                        while(!dataCache.isEmpty())
-                              output.write(dataCache.poll().toString().getBytes());
+                        while(!dataCache.isEmpty()) {
+                            String temp = dataCache.poll().toString();
+                            x += temp;
+                            output.write(temp.getBytes());
+                        }
                         output.close();
+                        historyInfo.setText(x);
                     }
                     catch (IOException e)
                     {
