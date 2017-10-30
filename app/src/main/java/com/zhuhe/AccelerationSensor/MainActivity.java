@@ -7,7 +7,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,7 +24,6 @@ import java.util.List;
 import java.util.Queue;
 
 import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
@@ -37,62 +34,28 @@ import static android.os.Environment.getExternalStorageDirectory;
 
 
 public class MainActivity extends AppCompatActivity {
-    public TextView historyInfo;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private TestSensorListener mSensorListener;
-    private ToggleButton toggleButton_x, toggleButton_y, toggleButton_z;
     private boolean isonRecoding = false;
     private final int MAXDATACOUNT = 1000000;
     private Queue<dataVector> dataCache = new ArrayDeque<>(MAXDATACOUNT);
     private final String FILENAME = "/log.txt";
     private Queue<dataVector> chartDataQueue = new ArrayDeque<dataVector>(10);
     private LineChartView linerChart;
-
-    /**
-     */
-
+    private TextView xInfo,yInfo,zInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //得到程序当前的Context，即MainActivity.this
-        bindViews();
         mSensorListener = new TestSensorListener();
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         linerChart = linerChartInit();
-        toggleButton_x = (ToggleButton) findViewById(R.id.toggleButton_x);
-        toggleButton_x.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (toggleButton_x.isChecked()) {
-                    toggleButton_y.setChecked(false);
-                    toggleButton_z.setChecked(false);
-                }
-            }
-        });
-        toggleButton_y = (ToggleButton) findViewById(R.id.toggleButton_y);
-        toggleButton_y.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (toggleButton_y.isChecked()) {
-                    toggleButton_x.setChecked(false);
-                    toggleButton_z.setChecked(false);
-                }
-            }
-        });
-        toggleButton_z = (ToggleButton) findViewById(R.id.toggleButton_z);
-        toggleButton_z.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (toggleButton_z.isChecked()) {
-                    toggleButton_x.setChecked(false);
-                    toggleButton_y.setChecked(false);
-                }
-            }
-        });
-
+        xInfo = (TextView)findViewById(R.id.xInfo);
+        yInfo = (TextView)findViewById(R.id.yInfo);
+        zInfo = (TextView)findViewById(R.id.zInfo);
         final ImageButton recodeButton = (ImageButton) findViewById(R.id.recordButton);
         recodeButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -115,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
                             output.write(temp.getBytes());
                         }
                         output.close();
-                        historyInfo.setText(x);
+                        Toast.makeText(getApplicationContext(),("文件已保存到" + getExternalStorageDirectory().toString() + FILENAME),Toast.LENGTH_LONG);
                     } catch (IOException e) {
                         e.printStackTrace();
-                        Log.e("mmp", "mmp");
+                        Toast.makeText(getApplicationContext(),"文件保存出错",Toast.LENGTH_LONG);
                     }
                     isonRecoding = false;
                 }
@@ -155,11 +118,6 @@ public class MainActivity extends AppCompatActivity {
         mSensorManager.unregisterListener(mSensorListener);
     }
 
-    private void bindViews() {
-        historyInfo = (TextView) findViewById(R.id.debugText);
-    }
-
-
     private class TestSensorListener implements SensorEventListener {
 
         @Override
@@ -169,22 +127,10 @@ public class MainActivity extends AppCompatActivity {
                 dataCache.add(new dataVector(event.values[0], event.values[1], event.values[2]));//每次接受到数据后放入队列
                 if (dataCache.size() == MAXDATACOUNT) dataCache.remove();
             }
-//            if (toggleButton_x.isChecked()) {
-//                // mSensorInfo.setText("各个方向加速度值" + String.format(" x:%.1f y:%.1f z:%.1f", event.values[0], event.values[1], event.values[2]));
-//                mSensorInfo.setText(String.format("%.1f ", event.values[0]));
-//                chartDataQueue.add(event.values[0]);
-//            }
-//            if (toggleButton_y.isChecked()) {
-//                // mSensorInfo.setText("各个方向加速度值" + String.format(" x:%.1f y:%.1f z:%.1f", event.values[0], event.values[1], event.values[2]));
-//                mSensorInfo.setText(String.format("%.1f ", event.values[1]));
-//                chartDataQueue.add(event.values[1]);
-//            }
-//            if (toggleButton_z.isChecked()) {
-//                // mSensorInfo.setText("各个方向加速度值" + String.format(" x:%.1f y:%.1f z:%.1f", event.values[0], event.values[1], event.values[2]));
-//                mSensorInfo.setText(String.format("%.1f ", event.values[2]));
-//                chartDataQueue.add(event.values[2]);
-//            }
             chartDataQueue.add(new dataVector(event.values[0],event.values[1],event.values[2]));
+            xInfo.setText(String.format("X:%.2f m/s²",event.values[0]));
+            yInfo.setText(String.format("Y:%.2f m/s²",event.values[1]));
+            zInfo.setText(String.format("Z:%.2f m/s²",event.values[2]));
             chartViewUpdate();
         }
 
@@ -217,9 +163,9 @@ public class MainActivity extends AppCompatActivity {
             zPointsValues.add(new PointValue(i, (float)index.z));
             i++;
         }
-        Line xline = new Line(xPointsValues).setColor(Color.BLUE).setCubic(true);
-        Line yline = new Line(yPointsValues).setColor(Color.YELLOW).setCubic(true);
-        Line zline = new Line(zPointsValues).setColor(Color.RED).setCubic(true);
+        Line xline = new Line(xPointsValues).setColor(Color.argb(0xff,0x00,0x99,0xCC)).setCubic(true);
+        Line yline = new Line(yPointsValues).setColor(Color.argb(0xff,0x66,0x99,0x00)).setCubic(true);
+        Line zline = new Line(zPointsValues).setColor(Color.argb(0xff,0xff,0x88,0x00)).setCubic(true);
         List<Line> lines = new ArrayList<>();
         lines.add(xline);
         lines.add(yline);
@@ -235,14 +181,10 @@ public class MainActivity extends AppCompatActivity {
         linerChart.setLineChartData(data);
     }
 
-    class dataVector { //用来存三个数据的集合
-        public double x, y, z;
+    private class dataVector { //用来存三个数据的集合
+        double x, y, z;
 
-        public dataVector() {
-            x = y = z = 0;
-        }
-
-        public dataVector(double ix, double iy, double iz) {
+        dataVector(double ix, double iy, double iz) {
             x = ix;
             y = iy;
             z = iz;
