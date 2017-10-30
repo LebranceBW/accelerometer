@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Line;
@@ -38,7 +37,6 @@ import static android.os.Environment.getExternalStorageDirectory;
 
 
 public class MainActivity extends AppCompatActivity {
-    public TextView mSensorInfo;
     public TextView historyInfo;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
@@ -48,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private final int MAXDATACOUNT = 1000000;
     private Queue<dataVector> dataCache = new ArrayDeque<>(MAXDATACOUNT);
     private final String FILENAME = "/log.txt";
-    private Queue<Float> chartDataQueue = new ArrayDeque<Float>(10);
+    private Queue<dataVector> chartDataQueue = new ArrayDeque<dataVector>(10);
     private LineChartView linerChart;
 
     /**
@@ -158,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
-        mSensorInfo = (TextView) findViewById(R.id.textView);
         historyInfo = (TextView) findViewById(R.id.debugText);
     }
 
@@ -167,27 +164,27 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onSensorChanged(SensorEvent event) {
-            mSensorInfo.setTextSize(40); //设置40PX
             if (chartDataQueue.size() == 10) chartDataQueue.remove();
             if (isonRecoding) {
                 dataCache.add(new dataVector(event.values[0], event.values[1], event.values[2]));//每次接受到数据后放入队列
                 if (dataCache.size() == MAXDATACOUNT) dataCache.remove();
             }
-            if (toggleButton_x.isChecked()) {
-                // mSensorInfo.setText("各个方向加速度值" + String.format(" x:%.1f y:%.1f z:%.1f", event.values[0], event.values[1], event.values[2]));
-                mSensorInfo.setText(String.format("%.1f ", event.values[0]));
-                chartDataQueue.add(event.values[0]);
-            }
-            if (toggleButton_y.isChecked()) {
-                // mSensorInfo.setText("各个方向加速度值" + String.format(" x:%.1f y:%.1f z:%.1f", event.values[0], event.values[1], event.values[2]));
-                mSensorInfo.setText(String.format("%.1f ", event.values[1]));
-                chartDataQueue.add(event.values[1]);
-            }
-            if (toggleButton_z.isChecked()) {
-                // mSensorInfo.setText("各个方向加速度值" + String.format(" x:%.1f y:%.1f z:%.1f", event.values[0], event.values[1], event.values[2]));
-                mSensorInfo.setText(String.format("%.1f ", event.values[2]));
-                chartDataQueue.add(event.values[2]);
-            }
+//            if (toggleButton_x.isChecked()) {
+//                // mSensorInfo.setText("各个方向加速度值" + String.format(" x:%.1f y:%.1f z:%.1f", event.values[0], event.values[1], event.values[2]));
+//                mSensorInfo.setText(String.format("%.1f ", event.values[0]));
+//                chartDataQueue.add(event.values[0]);
+//            }
+//            if (toggleButton_y.isChecked()) {
+//                // mSensorInfo.setText("各个方向加速度值" + String.format(" x:%.1f y:%.1f z:%.1f", event.values[0], event.values[1], event.values[2]));
+//                mSensorInfo.setText(String.format("%.1f ", event.values[1]));
+//                chartDataQueue.add(event.values[1]);
+//            }
+//            if (toggleButton_z.isChecked()) {
+//                // mSensorInfo.setText("各个方向加速度值" + String.format(" x:%.1f y:%.1f z:%.1f", event.values[0], event.values[1], event.values[2]));
+//                mSensorInfo.setText(String.format("%.1f ", event.values[2]));
+//                chartDataQueue.add(event.values[2]);
+//            }
+            chartDataQueue.add(new dataVector(event.values[0],event.values[1],event.values[2]));
             chartViewUpdate();
         }
 
@@ -210,17 +207,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void chartViewUpdate() {
-        List<PointValue> mPointsValues = new ArrayList<PointValue>(10);
+        List<PointValue> xPointsValues = new ArrayList<PointValue>(10);
+        List<PointValue> yPointsValues = new ArrayList<PointValue>(10);
+        List<PointValue> zPointsValues = new ArrayList<PointValue>(10);
         int i = 0;
-        for (Float x : chartDataQueue)
-            mPointsValues.add(new PointValue(i++, x));
-        Line line = new Line(mPointsValues).setColor(Color.BLUE).setCubic(true);
+        for (dataVector index: chartDataQueue) {
+            xPointsValues.add(new PointValue(i, (float)index.x));
+            yPointsValues.add(new PointValue(i, (float)index.y));
+            zPointsValues.add(new PointValue(i, (float)index.z));
+            i++;
+        }
+        Line xline = new Line(xPointsValues).setColor(Color.BLUE).setCubic(true);
+        Line yline = new Line(yPointsValues).setColor(Color.YELLOW).setCubic(true);
+        Line zline = new Line(zPointsValues).setColor(Color.RED).setCubic(true);
         List<Line> lines = new ArrayList<>();
-        lines.add(line);
+        lines.add(xline);
+        lines.add(yline);
+        lines.add(zline);
         LineChartData data = new LineChartData();
         Axis xaxis = new Axis();
         Axis yaxis = new Axis();
-        List<AxisValue> temp = new ArrayList<>();
 
         data.setAxisXBottom(xaxis);
         data.setAxisYLeft(yaxis);
@@ -230,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class dataVector { //用来存三个数据的集合
-        double x, y, z;
+        public double x, y, z;
 
         public dataVector() {
             x = y = z = 0;
