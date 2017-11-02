@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private final int MAXDATACOUNT = 1000000;
     private Queue<dataVector> dataCache = new ArrayDeque<>(MAXDATACOUNT);
     private final String FILENAME = "/log.txt";
-    private Queue<dataVector> chartDataQueue = new ArrayDeque<dataVector>(10);
+    private Queue<dataVector> chartDataQueue = new ArrayDeque<>(10);
     private LineChartView linerChart;
     private TextView xInfo,yInfo,zInfo;
     @Override
@@ -65,23 +65,23 @@ public class MainActivity extends AppCompatActivity {
                     isonRecoding = true;
                 } else {
                     recodeButton.setImageResource(R.mipmap.play);
-                    String x = new String();
                     try {
                         File f = new File(getExternalStorageDirectory().toString() + FILENAME);
                         if (!f.exists())
                             f.createNewFile();
                         FileOutputStream output = new FileOutputStream(f, false);
 
+                        String x = "";
                         while (!dataCache.isEmpty()) {
                             String temp = dataCache.poll().toString();
                             x += temp;
                             output.write(temp.getBytes());
                         }
                         output.close();
-                        Toast.makeText(getApplicationContext(),("文件已保存到" + getExternalStorageDirectory().toString() + FILENAME),Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(),("文件已保存到" + getExternalStorageDirectory().toString() + FILENAME),Toast.LENGTH_LONG).show();
                     } catch (IOException e) {
                         e.printStackTrace();
-                        Toast.makeText(getApplicationContext(),"文件保存出错",Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(),"文件保存出错",Toast.LENGTH_LONG).show();
                     }
                     isonRecoding = false;
                 }
@@ -153,9 +153,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void chartViewUpdate() {
-        List<PointValue> xPointsValues = new ArrayList<PointValue>(10);
-        List<PointValue> yPointsValues = new ArrayList<PointValue>(10);
-        List<PointValue> zPointsValues = new ArrayList<PointValue>(10);
+        List<PointValue> xPointsValues = new ArrayList<>(10);
+        List<PointValue> yPointsValues = new ArrayList<>(10);
+        List<PointValue> zPointsValues = new ArrayList<>(10);
         int i = 0;
         for (dataVector index: chartDataQueue) {
             xPointsValues.add(new PointValue(i, (float)index.x));
